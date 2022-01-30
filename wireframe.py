@@ -62,6 +62,8 @@ class Wireframe:
     def __init__(self):
         self.nodes = np.zeros((0, 4))
         self.edges = []
+        self.faces = []
+        self.colors = []
     
     def addNodes(self, node_list):
         ones_column = np.ones((len(node_list), 1))
@@ -70,6 +72,12 @@ class Wireframe:
 
     def addEdges(self, edge_list):
         self.edges += edge_list
+
+    def addFaces(self, face_list):
+        self.faces += face_list
+
+    def addColors(self, color_list):
+        self.colors += color_list
     
     ## For debugging ##
     def outputNodes(self):
@@ -81,7 +89,7 @@ class Wireframe:
         print("\n --- Edges ---")
         for i, (node1, node2) in enumerate(self.edges):
             print(f" {i}: {node1} -> {node2}")
-    ##               ##
+    ####################
 
     def transform(self, matrix):
         """
@@ -139,6 +147,16 @@ class Wireframe:
         meanZ = sum([node[2] for node in self.nodes]) / num_nodes
 
         return (meanX, meanY, meanZ)
+
+    def getFacesAvgZ(self):
+        avgZ = []
+        i = 0
+        for f in self.faces:
+            z = (self.nodes[f[0]][2] + self.nodes[f[1]][2] + \
+                 self.nodes[f[2]][2] + self.nodes[f[3]][2]) / 4.0
+            avgZ.append([i, z])
+            i = i + 1
+        return avgZ
 
 
 

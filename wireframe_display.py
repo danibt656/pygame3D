@@ -1,6 +1,7 @@
 import wireframe as wf
 import pygame as pg
 import numpy as np
+from operator import itemgetter
 
 
 # Color constants
@@ -119,6 +120,16 @@ class ProjectionViewer:
                                    (int(node[0]), int(node[1])),
                                    self.nodeRadius,
                                    0)
+            if self.displayTextures:
+                avgZ = wireframe.getFacesAvgZ()
+                for zVal in sorted(avgZ,key=itemgetter(1),reverse=True):
+                    fIndex = zVal[0]
+                    f = wireframe.faces[fIndex]
+                    pointList = [(wireframe.nodes[f[0]][0], wireframe.nodes[f[0]][1]), (wireframe.nodes[f[1]][0], wireframe.nodes[f[1]][1]),
+                                 (wireframe.nodes[f[1]][0], wireframe.nodes[f[1]][1]), (wireframe.nodes[f[2]][0], wireframe.nodes[f[2]][1]),
+                                 (wireframe.nodes[f[2]][0], wireframe.nodes[f[2]][1]), (wireframe.nodes[f[3]][0], wireframe.nodes[f[3]][1]),
+                                 (wireframe.nodes[f[3]][0], wireframe.nodes[f[3]][1]), (wireframe.nodes[f[0]][0], wireframe.nodes[f[0]][1])]
+                    pg.draw.polygon(self.screen, wireframe.colors[fIndex],pointList)
 
     def translateAll(self, vector):
         """
@@ -168,10 +179,12 @@ def _setup_cube(ix, iy, iz, size):
     cube.addEdges([(n,n+4) for n in range(0,4)] + \
                   [(n,n+1) for n in range(0,8,2)] + \
                   [(n,n+2) for n in (0,1,4,5)])
+    cube.addFaces([(0,1,2,3),(1,5,6,2),(5,4,7,6),(4,0,3,7),(0,4,5,1),(3,2,6,7)])
+    cube.addColors([(255,0,255),(255,0,0),(0,255,0),(0,0,255),(0,255,255),(255,255,0)])
     return cube
 
 if __name__ == '__main__':
-    cube1 = _setup_cube(50, 50, 50, 50)
+    cube1 = _setup_cube(400, 300, 0, 50)
     #cube2 = _setup_cube(80, 50, 50, 30)
     
     pv = ProjectionViewer(800, 600)
