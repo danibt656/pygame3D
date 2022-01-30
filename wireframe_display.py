@@ -9,8 +9,8 @@ KEY_TO_FUNCTION = {
     pg.K_d: (lambda x: x.translateAll([10, 0, 0])),
     pg.K_SPACE: (lambda x: x.translateAll([0, 10, 0])),
     pg.K_LSHIFT: (lambda x: x.translateAll([0, -10, 0])),
-    pg.K_w: (lambda x: x.scaleAll([1.25, 1.25, 1.25])),
-    pg.K_s: (lambda x: x.scaleAll([0.8, 0.8, 0.8])),
+    pg.K_w: (lambda x: x.scaleAll([1.25]*3)),
+    pg.K_s: (lambda x: x.scaleAll([0.5]*3)),
 
     # Rotation
     pg.K_q: (lambda x: x.rotateAll('X',  0.1)),
@@ -136,10 +136,10 @@ def _setup_cube(ix, iy, iz, size):
     return cube
 
 if __name__ == '__main__':
-    cube1 = _setup_cube(50, 50, 50, 30)
-    cube2 = _setup_cube(80, 50, 50, 30)
+    cube1 = _setup_cube(50, 50, 50, 50)
+    #cube2 = _setup_cube(80, 50, 50, 30)
     
     pv = ProjectionViewer(800, 600)
     pv.addWireframe('cube1', cube1)
-    pv.addWireframe('cube2', cube2)
+    #pv.addWireframe('cube2', cube2)
     pv.run()
