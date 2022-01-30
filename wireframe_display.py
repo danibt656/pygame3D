@@ -3,6 +3,14 @@ import pygame as pg
 import numpy as np
 
 
+# Color constants
+BG_COLOR = (174, 198, 255)
+NODE_COLOR = (204, 0, 0)
+EDGE_COLOR = (64, 64, 64)
+FACE_COLOR = (0, 255, 0)
+TEXT_COLOR = (0, 0, 0)
+
+# Key press functions
 KEY_TO_FUNCTION = {
     # Movement
     pg.K_a: (lambda x: x.translateAll([-10, 0, 0])),
@@ -18,7 +26,12 @@ KEY_TO_FUNCTION = {
     pg.K_f: (lambda x: x.rotateAll('Y',  0.1)),
     pg.K_g: (lambda x: x.rotateAll('Y', -0.1)),
     pg.K_z: (lambda x: x.rotateAll('Z',  0.1)),
-    pg.K_x: (lambda x: x.rotateAll('Z', -0.1))
+    pg.K_x: (lambda x: x.rotateAll('Z', -0.1)),
+
+    # Debug controls
+    pg.K_F1: (lambda x: (x.setDisplayNodes(not x.displayNodes))),
+    pg.K_F2: (lambda x: (x.setDisplayEdges(not x.displayEdges))),
+    pg.K_F3: (lambda x: (x.setDisplayTextures(not x.displayTextures)))
 }
 
 class ProjectionViewer:
@@ -27,18 +40,38 @@ class ProjectionViewer:
     """
 
     def __init__(self, width, height):
+        # Basic window setup
         self.width = width
         self.height = height
         self.screen = pg.display.set_mode((width, height))
         pg.display.set_caption('Wireframe Display')
-        self.background = (10, 10, 50)
+        self.background = BG_COLOR
 
+        # Various display options
         self.wireframes = {}
         self.displayNodes = True
         self.displayEdges = True
-        self.nodeColor = (255, 0, 0)
-        self.edgeColor = (200, 200, 200)
+        self.displayTextures = True
+        self.nodeColor = NODE_COLOR
+        self.edgeColor = EDGE_COLOR
         self.nodeRadius = 2
+    
+        # Set up the text
+        self.help_text = f"Nodes [F1]: {self.displayNodes} | Edges [F2]: {self.displayEdges} | Textures[F3]: {self.displayTextures}"
+        pg.font.init()
+        font = pg.font.SysFont('Arial', 15)
+        self.textSurface = font.render(self.help_text, True, TEXT_COLOR)
+        self.textRect = self.textSurface.get_rect()
+
+    # For debugging
+    def setDisplayNodes(self, d):
+        self.displayNodes = d
+
+    def setDisplayEdges(self, d):
+        self.displayEdges = d
+
+    def setDisplayTextures(self, d):
+        self.displayTextures = d
 
     def run(self):
         """
@@ -68,6 +101,8 @@ class ProjectionViewer:
         Draw the wireframes on the screen
         """
         self.screen.fill(self.background)
+
+        self.screen.blit(self.textSurface, self.textRect)
 
         for wireframe in self.wireframes.values():
             if self.displayEdges:
